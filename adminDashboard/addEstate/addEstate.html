@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Your Page Title</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="">
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+<div class="container-fluid d-flex justify-content-center align-items-center vh-100">
+    <div class="card p-4">
+        <form onsubmit="displayInputs(eve)">
+            <div class="form-group">
+                <input type="text" class="form-control" id="Id" placeholder="Enter your name">
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" id="NumberOfRooms" placeholder="Enter NumberOfRooms">
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" id="city" placeholder="Enter city">
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" id="postcode" placeholder="Enter postcode">
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" id="description" placeholder="Enter description">
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" id="headline" placeholder="Enter a headline">
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" id="propertyType" placeholder="Enter a property type">
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" id="EstateAgentID" placeholder="Enter a EstateAgentID">
+            </div>
+            <button id="submit" type="submit" class="btn btn-primary">Add property</button>
+
+        </form>
+
+    </div>
+</div>
+
+<script>
+   
+
+   
+    const submitButton = document.getElementById("submit");
+    submitButton.addEventListener("click", buttonClick, false);
+
+    
+
+
+    
+    function buttonClick(event) {
+     
+       event.preventDefault();
+          // buraya jquery ajax ile formun içeriğini bir post request isteği atacağız. 
+          //daha sonra eğer response geldiyse ve success ise location href aşağıdak, kod yani addEstatePictures sayfasına yönlendirecek ve bu sayfanın uzantısına id olarak response gelen eklenen estatein id si basılacak. daha sonra bu id addEstatePictures sayfasında kullanılarak dropzone js içinde hangi estate pictureslar var ise onlarla birlikte bu id yi yollayacaksın ki ben bileyim bu fotoğraflar hangi evin fotoğrafları. 
+        window.location.href = "/esrsProjectUI/adminDashboard/index.html"
+
+    }
+
+
+</script>
+</body>
+</html>
