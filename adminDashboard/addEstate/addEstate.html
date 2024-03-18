@@ -16,10 +16,7 @@
     <div class="card p-4">
         <form onsubmit="displayInputs(eve)">
             <div class="form-group">
-                <input type="text" class="form-control" id="Id" placeholder="Enter your name">
-            </div>
-            <div class="form-group">
-                <input type="text" class="form-control" id="NumberOfRooms" placeholder="Enter NumberOfRooms">
+                <input type="number" class="form-control" id="NumberOfRooms" placeholder="Enter NumberOfRooms">
             </div>
             <div class="form-group">
                 <input type="text" class="form-control" id="city" placeholder="Enter city">
@@ -33,13 +30,38 @@
             <div class="form-group">
                 <input type="text" class="form-control" id="headline" placeholder="Enter a headline">
             </div>
-            <div class="form-group">
-                <input type="text" class="form-control" id="propertyType" placeholder="Enter a property type">
+           <div class="form-group">
+                <select class="form-control" id="estateType">
+                    <option value="">Select Estate Type</option>
+                    <option value="0">For Sale</option>
+                    <option value="1">For Rent</option>
+                    <option value="-1">Daily Rent</option>
+                </select>
             </div>
             <div class="form-group">
-                <input type="text" class="form-control" id="EstateAgentID" placeholder="Enter a EstateAgentID">
+                <select class="form-control" id="propertyType">
+                    <option value="">Select Property Type</option>
+                    <option value="0">Apartmanent</option>
+                    <option value="1">Villa</option>
+                    <option value="2">Home</option>
+                    <option value="3">Office</option>
+                    <option value="4">Building</option>
+                    <option value="5">Townhouse</option>
+                    <option value="6">Shop</option>
+                    <option value="7">Garage</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <select class="form-control" id="EstateAgentID">
+                    <option value="">Select Estate Agent</option>
+                    <!-- Burada estate ajanlarının dinamik olarak yükleneceği bir yapı olabilir -->
+                    <!-- Örneğin, bu kısımda JavaScript ile AJAX çağrısı yaparak estate ajanlarını alabilirsiniz -->
+                    <!-- Dönen veriyi bu dropdown içine yerleştirebilirsiniz -->
+                </select>
             </div>
             <button id="submit" type="submit" class="btn btn-primary">Add property</button>
+            </div>
+            
 
         </form>
 
@@ -47,22 +69,101 @@
 </div>
 
 <script>
+    // Sayfa yüklendiğinde çalışacak olan fonksiyon
+    let access_token = localStorage.getItem('accessToken')
+    $(document).ready(function() {
+        
+        $.ajax({
+            type: "GET",
+            url: "https://localhost:7070/Account/IsAuthorize",
+            headers: {
+                "Authorization": `Bearer ${access_token}`
+            }, 
+            success: function(response) {
+               
+            },
+            error: function(error) {
+                console.error('Error:', error);
+                window.location.href = '/esrsProjectUI/adminDashboard/account/loginpage.html';
+            }
+        });
+
+        // Estate ajanlarını getiren AJAX isteği
+        $.ajax({
+            type: "GET",
+            url: "https://localhost:7070/Account/GetAllAgents",
+            success: function(response) {
+                // Dropdown menüsüne estate ajanlarını ekleme
+                var dropdown = $('#EstateAgentID');
+                dropdown.empty(); // Mevcut seçenekleri temizle
+
+                $.each(response, function(index, agent) {
+                    dropdown.append($('<option></option>').attr('value', agent.id).text(agent.name + ' ' + agent.surname));
+                });
+            },
+            error: function(error) {
+                console.error('Error:', error);
+            }
+        });
+    });
    
 
-   
+    
     const submitButton = document.getElementById("submit");
     submitButton.addEventListener("click", buttonClick, false);
 
     
-
+    //sayfa yüklenirken eventine ajax get ile https://localhost:7070/Account/GetAllAgents buraya istek atıp dönen data içindeki name surname kısmını dropdown da göster , dropdown itemlerinin value su o name surname deki kişinin id si olsun
 
     
     function buttonClick(event) {
      
-       event.preventDefault();
-          // buraya jquery ajax ile formun içeriğini bir post request isteği atacağız. 
-          //daha sonra eğer response geldiyse ve success ise location href aşağıdak, kod yani addEstatePictures sayfasına yönlendirecek ve bu sayfanın uzantısına id olarak response gelen eklenen estatein id si basılacak. daha sonra bu id addEstatePictures sayfasında kullanılarak dropzone js içinde hangi estate pictureslar var ise onlarla birlikte bu id yi yollayacaksın ki ben bileyim bu fotoğraflar hangi evin fotoğrafları. 
-        window.location.href = "/esrsProjectUI/adminDashboard/index.html"
+        event.preventDefault();
+            const estate = {
+            numberOfRooms: parseInt(document.getElementById("NumberOfRooms").value),
+            city: document.getElementById("city").value,
+            postCode: document.getElementById("postcode").value,
+            description: document.getElementById("description").value,
+            headline: document.getElementById("headline").value,
+            estateType: parseInt(document.getElementById("estateType").value),
+            propertyType: parseInt(document.getElementById("propertyType").value),
+            estateAgentId: document.getElementById("EstateAgentID").value
+        };
+        console.log(JSON.stringify(estate))
+
+        // // Access token'i saklama
+        // var accessToken = "your_access_token";
+        // localStorage.setItem("accessToken", accessToken);
+
+        // // Access token'i al
+        // var storedAccessToken = localStorage.getItem("accessToken");
+        // console.log(storedAccessToken); // Bu console çıktısı tarayıcınızın konsolunda gösterilecek
+        //sonra bu access tokeni alıp 
+
+        $.ajax({
+            type: "POST",
+            url: "https://localhost:7070/AddEstate",
+            data: JSON.stringify(estate),
+            contentType: "application/json",
+            headers: {
+                "Authorization": `Bearer ${access_token}`
+            }, 
+            success: function (response) {
+                
+                var confirmMessage = confirm("Ev resmi eklemek ister misiniz?");
+                if (confirmMessage) {
+                    // Kullanıcı ev resmi eklemek istiyorsa belirtilen sayfaya yönlendir
+                    window.location.href = "/esrsProjectUI/adminDashboard/addEstate/addEstatePictures/addEstatePictures.html#" + response.id;
+                } else {
+                    // Kullanıcı şu anda ev resmi eklemek istemiyorsa, admin panelinin ana sayfasına yönlendir
+                    window.location.href = "/esrsProjectUI/adminDashboard/index.html";
+                }
+            },
+            error: function (error) {
+                console.error("Error:", error);
+            }
+        });
+
 
     }
 
