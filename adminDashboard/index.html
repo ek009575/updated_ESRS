@@ -78,16 +78,16 @@
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
                     aria-expanded="true" aria-controls="collapseUtilities">
                     <i class="fas fa-fw fa-wrench"></i>
-                    <span>Utilities</span>
+                    <span>Estate Agents</span>
                 </a>
                 <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Custom Utilities:</h6>
-                        <a class="collapse-item" href="utilities-color.html">Colors</a>
-                        <a class="collapse-item" href="utilities-border.html">Borders</a>
-                        <a class="collapse-item" href="utilities-animation.html">Animations</a>
-                        <a class="collapse-item" href="utilities-other.html">Other</a>
+                        <h6 class="collapse-header">Estate Agent Utilities:</h6>
+                        <a class="collapse-item" href="/esrsProjectUI/adminDashboard/addEstateAgent/addEstateAgent.html">Add Estate Agent</a>
+                        <a class="collapse-item" href="/esrsProjectUI/adminDashboard/addEstateAgent/addEstateAgentTable.html">Agent Table</a>
+                        
+                        
                     </div>
                 </div>
             </li>
@@ -95,61 +95,7 @@
             <!-- Divider -->
             <hr class="sidebar-divider">
 
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Addons
-            </div>
-
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-                    aria-expanded="true" aria-controls="collapsePages">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>Pages</span>
-                </a>
-                <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Login Screens:</h6>
-                        <a class="collapse-item" href="login.html">Login</a>
-                        <a class="collapse-item" href="register.html">Register</a>
-                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
-                        <div class="collapse-divider"></div>
-                        <h6 class="collapse-header">Other Pages:</h6>
-                        <a class="collapse-item" href="404.html">404 Page</a>
-                        <a class="collapse-item" href="blank.html">Blank Page</a>
-                    </div>
-                </div>
-            </li>
-
-            <!-- Nav Item - Charts -->
-            <li class="nav-item">
-                <a class="nav-link" href="charts.html">
-                    <i class="fas fa-fw fa-chart-area"></i>
-                    <span>Charts</span></a>
-            </li>
-
-            <!-- Nav Item - Tables -->
-            <li class="nav-item">
-                <a class="nav-link" href="tables.html">
-                    <i class="fas fa-fw fa-table"></i>
-                    <span>Tables</span></a>
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
-
-            <!-- Sidebar Toggler (Sidebar) -->
-            <div class="text-center d-none d-md-inline">
-                <button class="rounded-circle border-0" id="sidebarToggle"></button>
-            </div>
-
-            <!-- Sidebar Message -->
-            <div class="sidebar-card d-none d-lg-flex">
-                <img class="sidebar-card-illustration mb-2" src="img/undraw_rocket.svg" alt="...">
-                <p class="text-center mb-2"><strong>SB Admin Pro</strong> is packed with premium features, components, and more!</p>
-                <a class="btn btn-success btn-sm" href="https://startbootstrap.com/theme/sb-admin-pro">Upgrade to Pro!</a>
-            </div>
-
+           
         </ul>
         <!-- End of Sidebar -->
 
@@ -379,14 +325,15 @@
                                    
                                     <thead>
                                         <tr>
-                                            <th>Id</th>
+                                            
                                             <th>NumberOfRooms</th>
                                             <th>City</th>
                                             <th>PostCode</th>
                                             <th>Description</th>
                                             <th>Headline</th>
+                                            <th>estateType</th>
                                             <th>PropertyType</th>
-                                            <th>EstateAgentID</th>
+                                            <th>Actions</th>
                                         </tr>
                                     </thead>
                                         
@@ -472,8 +419,126 @@
 </html>
 
 <script>
-    $( document ).ready(function() {
-            //burada getallestates apisinden bütün verileri çekip tabloya 
-            //string concat ile tbody içindeki innerhtml i değiştireceksin.
+   $(document).ready(function() {
+    var access_token = localStorage.getItem('accessToken');
+    
+    // Kullanıcı yetkilendirme kontrolü
+    $.ajax({
+        type: "GET",
+        url: "https://localhost:7070/Account/IsAuthorize",
+        headers: {
+            "Authorization": `Bearer ${access_token}`
+        },
+        success: function(response) {
+            // Kullanıcı yetkilendirilmişse, gayrimenkul verilerini al
+            getEstates();
+        },
+        error: function(error) {
+            console.error('Authorization Error:', error);
+            window.location.href = '/esrsProjectUI/adminDashboard/account/loginpage.html';
+        }
+    });
+
+    // Gayrimenkul verilerini al ve tabloyu doldur
+    function getEstates() {
+        $.ajax({
+            type: "GET",
+            url: "https://localhost:7070/GetEstates",
+            headers: {
+                "Authorization": `Bearer ${access_token}`
+            },
+            success: function(data) {
+                // Tabloyu doldur
+                var tableBody = $('#displayArea');
+                tableBody.empty(); // Önceki verileri temizle
+                data.forEach(function(estate) {
+                    var estateTypeText = getEstateTypeText(estate.estateType); // estateType için dönüşüm
+                    var propertyTypeText = getPropertyTypeText(estate.propertyType); // propertyType için dönüşüm
+                    var row = `<tr>
+                        <td>${estate.numberOfRooms}</td>
+                        <td>${estate.city}</td>
+                        <td>${estate.postCode}</td>
+                        <td>${estate.description}</td>
+                        <td>${estate.headline}</td>
+                        <td>${estateTypeText}</td> <!-- Dönüştürülmüş estateType değeri -->
+                        <td>${propertyTypeText}</td> <!-- Dönüştürülmüş propertyType değeri -->
+                        <td><button class="btn btn-danger delete-btn" data-estate-id="${estate.id}">Kaldır</button><!-- Kaldır butonu -->
+                            <button class="btn btn-info details-btn" data-estate-id="${estate.id}">Detaylar</button> <!-- Detaylar butonu -->
+                        </td> 
+                        
+                    </tr>`;
+                    tableBody.append(row);
+                });
+                $('.details-btn').click(function() {
+                var estateId = $(this).data('estate-id'); // Butondan gayrimenkul ID'sini al
+                window.location.href = `/estateDetails.html?estateId=${estateId}`; // Detaylar sayfasına yönlendir
+            });
+                $('.delete-btn').click(function() {
+                var estateId = $(this).data('estate-id'); // Butondan gayrimenkul ID'sini al
+                deleteEstate(estateId); // Silme işlevini çağır
+            });
+            },
+            error: function(error) {
+                console.error('Error fetching estates:', error);
+            }
+        });
+    }
+    
+    function getEstateTypeText(estateType){
+        switch(estateType){
+            case 0:
+                return "For Sale";
+            case 1:
+                return "For Rent";
+            case -1:
+                return "Daily Rent"        
+        }
+    }
+    // propertyType için dönüşüm fonksiyonu
+    function getPropertyTypeText(propertyType) {
+        switch (propertyType) {
+            case 0:
+                return "Apartment";
+            case 1:
+                return "Villa";
+            case 2:
+                return "Home";
+            case 3:
+                return "Office";
+            case 4:
+                return "Building";
+            case 5:
+                return "Townhouse";
+            case 6:
+                return "Shop";
+            case 7:
+                return "Garage";
+            default:
+                return "Unknown";
+        }
+    }
+    function deleteEstate(estateId) {
+    $.ajax({
+        type: "DELETE",
+        url: `https://localhost:7070/DeleteEstate/${estateId}`,
+        headers: {
+            "Authorization": `Bearer ${access_token}`
+        },
+        success: function() {
+            var confirmMessage = confirm("Silmek istediginden emin misin");
+            if (confirmMessage) {
+                console.log('Estate deleted successfully');
+                getEstates(); // Tabloyu güncellemek için gayrimenkul listesini yeniden al
+                } 
+            else {
+                    console.log("do nothing")
+                }
+            
+        },
+        error: function(error) {
+            console.error('Error deleting estate:', error);
+        }
+    });
+}
 });
 </script>
