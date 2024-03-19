@@ -468,8 +468,8 @@
     background-color: transparent; /* Arka planı şeffaf yap */
     border: none; /* Kenarlıkları kaldır */
 }
-
-/* İsteğe bağlı olarak, modal içeriğindeki padding veya margin gibi stilleri ayarlayabilirsiniz */
-.modal-body {
-    color: black; /* Metin rengini ayarla, arka plan şeffaf olduğunda görünürlüğü artırır */
+.modal-body-success {
+    background-color: #20c997; /* Bootstrap'in "success" renginin hex kodu */
+    color: #fff; /* Metin rengi için beyaz, kontrastı artırmak adına */
 }
+

@@ -345,7 +345,7 @@
                 method: 'get',
                 dataType: 'json',
                 success: function(estates) {
-                    estates.forEach((estate, estateIndex) => {
+                    estates.forEach((estate, index) => {
                     var estateType = "";
                     if (estate.estateType == 0)  {
                         estateType = "For Sale"
@@ -385,6 +385,7 @@
                         propertyType = "Garage"
                     }
                     // Oluşturulan Base64 string ile HTML içeriğinin hazırlanma
+                    var carouselId = `carouselEstate${index}`;
                     var estateHtml = `
                         <div class="col-lg-4 col-md-6 wow fadeInUp estate-item" data-wow-delay="0.1s">
                             <div class="property-item rounded overflow-hidden">
@@ -403,13 +404,71 @@
                                 
                                 
                             </div>
-                            <div class="text-center mt-3"> 
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">Click to See Pictures</button>
+                             <div class="text-center mt-3">
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#${carouselId}Modal">Click to See Pictures</button>
+                               </div>`;
+                        // Carousel Modal
+                        var modalHtml = `
+                    <div class="modal fade" id="${carouselId}Modal" tabindex="-1" aria-labelledby="${carouselId}ModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-xl">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                </div>
+                                <div class="modal-body modal-body-success">
+                                    <div id="${carouselId}" class="carousel slide" data-bs-ride="carousel">
+                                        <div class="carousel-inner">`;
+                
+                    estate.estatePictures.forEach((picture, pictureIndex) => {
+                    var activeClass = pictureIndex === 0 ? ' active' : '';
+                    modalHtml += `
+                        <div class="carousel-item${activeClass}">
+                            <img src="data:image/jpeg;base64,${picture}" class="d-block w-100" alt="Image ${pictureIndex}">
+                            <div class="carousel-caption d-none d-md-block">
                             </div>
                         </div>`;
-
+                });
+                
+                estateHtml += `
+                                        </div>
+                                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselEstate${index}" data-bs-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Previous</span>
+                                        </button>
+                                        <button class="carousel-control-next" type="button" data-bs-target="#carouselEstate${index}" data-bs-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Next</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+                    modalHtml += `
+                                        </div>
+                                        <button class="carousel-control-prev" type="button" data-bs-target="#${carouselId}" data-bs-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Previous</span>
+                                        </button>
+                                        <button class="carousel-control-next" type="button" data-bs-target="#${carouselId}" data-bs-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Next</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-footer">
+                                    <div>
+                                        <h5>${estate.headline}</h5>
+                                        <p><i class="fa fa-map-marker-alt text-primary me-2"></i>${estate.city}, ${estate.numberOfRooms} Rooms</p>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
                     document.querySelector('.properties').innerHTML += estateHtml;
+                    // Modal HTML'ini sayfaya ekleyin
+                    document.body.innerHTML += modalHtml;
                     
+
                 });
                 $(document).on('click', '.myModal', function() {
                 });
@@ -427,7 +486,7 @@
         </script>
 
 <!-- Modal -->
-<div class="modal fade" id="myModal" role="dialog">
+<!--<div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
         <div class="modal-header">
@@ -462,6 +521,7 @@
     </div>
   </div>
 </div>
+-->
 
 </body>
 
