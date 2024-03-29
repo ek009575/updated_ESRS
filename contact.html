@@ -49,7 +49,7 @@
                     <div class="icon p-2 me-2">
                         <img class="img-fluid" src="img/icon-deal.png" alt="Icon" style="width: 30px; height: 30px;">
                     </div>
-                    <h1 class="m-0 text-primary">SONER ARIDUMAN</h1>
+                    <h1 class="m-0 text-primary">ESRS</h1>
                 </a>
                 <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                     <span class="navbar-toggler-icon"></span>
@@ -288,6 +288,39 @@
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
+    <script>
+        $(document).on('click', '.btn-primary', function(e) {
+                e.preventDefault(); // Formun normal submit işlemini engelle
+                console.log("Butona Tıklandı");
+
+                var mailData = {
+                    To: 'fakitayranariduru@gmail.com',
+                    Body: $('#name').val() + ' ' + $('#email').val() + ' ' + $('#message').val(),
+                    Subject: $('#subject').val(),
+                };
+                console.log("Arama butonuna tıklandı, form verileri: ", mailData);
+
+                $.ajax({
+                    url: 'https://localhost:7070/MailSender',
+                    type: 'Post',
+                    contentType: 'application/json', // Gönderilen verinin türünü belirtir
+                    data: mailData,
+                    success: function(estates) {
+                        // İşlem başarılı olduğunda, cevabı işle
+                        console.log('Success: Email Gönderildi', estates);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+
+
+
+
+
+        });
+
+    </script>
 </body>
 
 </html>
