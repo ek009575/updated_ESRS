@@ -294,7 +294,7 @@
                 console.log("Butona Tıklandı");
 
                 var mailData = {
-                    To: 'fakitayranariduru@gmail.com',
+                    To: $('#email').val(),
                     Body: $('#name').val() + ' ' + $('#email').val() + ' ' + $('#message').val(),
                     Subject: $('#subject').val(),
                 };
@@ -304,20 +304,15 @@
                     url: 'https://localhost:7070/MailSender',
                     type: 'Post',
                     contentType: 'application/json', // Gönderilen verinin türünü belirtir
-                    data: mailData,
-                    success: function(estates) {
+                    data: JSON.stringify(mailData),
+                    success: function(mailData) {
                         // İşlem başarılı olduğunda, cevabı işle
-                        console.log('Success: Email Gönderildi', estates);
+                        console.log('Success: Email Gönderildi', mailData);
                     },
                     error: function(xhr, status, error) {
                         console.error('Error:', error);
                     }
                 });
-
-
-
-
-
         });
 
     </script>
