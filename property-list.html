@@ -374,7 +374,7 @@
                     else if (estate.propertyType == 6) {
                         propertyType = "Shop"
                     }
-                    else if (estate.propertyType == 6) {
+                    else if (estate.propertyType == 7) {
                         propertyType = "Garage"
                     }
                     // Oluşturulan Base64 string ile HTML içeriğinin hazırlanma
@@ -464,7 +464,14 @@
                     
 
                 });
+                $(document).on('click', '.btn-dark', function(e) {
+                     console.log("Butona tıklandı!");
+                     
+                     
+                    });
+
                 $(document).on('click', '.myModal', function() {
+                    console.log("Button Clicked");
                 });
                 $('.carousel').carousel({
                     interval: 5000
@@ -476,8 +483,9 @@
                     console.log(err);
                 }
             });
-            $('.btn-dark').click(function(e){
+            $(document).on('click', '.btn-dark', function(e) {
                 e.preventDefault(); // Formun normal submit işlemini engelle
+                console.log("Butona Tıklandı");
 
                 // Form verilerini al
                 var searchData = {
@@ -488,6 +496,7 @@
                     city: $('#city').val(),
                     postCode: $('#postCode').val()
                 };
+                console.log("Arama butonuna tıklandı, form verileri: ", searchData);
 
                 // API'ye AJAX isteği gönder
                 $.ajax({
@@ -510,7 +519,47 @@
             function updateProperties(estates) {
                 $('.properties').empty(); // Önceki içeriği temizle
                 estates.forEach(function(estate, index) {
+                    var estateType = "";
+                    if (estate.estateType == 0)  {
+                        estateType = "For Sale"
+                    }
+                    else if (estate.estateType == 1) {
+                        estateType = "For Rent"
+                    }
+                    else {
+                        estateType = "For Daily Rent"
+                    }
+
+                    var propertyType = "";
+
+                    if (estate.propertyType == 0) {
+                        propertyType = "Apartment"
+                    }
+
+                    else if (estate.propertyType == 1){
+                        propertyType = "Villa"
+                    }
+                    else if (estate.propertyType == 2) {
+                        propertyType = "Home"
+                    }
+                    else if (estate.propertyType == 3) {
+                        propertyType = "Office"
+                    }
+                    else if (estate.propertyType == 4) {
+                        propertyType = "Building"
+                    }
+                    else if (estate.propertyType == 5) {
+                        propertyType = "Town House"
+                    }
+                    else if (estate.propertyType == 6) {
+                        propertyType = "Shop"
+                    }
+                    else if (estate.propertyType == 7) {
+                        propertyType = "Garage"
+                    }
+                    
                     // Emlak bilgilerini kullanarak HTML içeriği oluştur
+                    var carouselId = `carouselEstate${index}`;
                     var estateHtml = `
                         <div class="col-lg-4 col-md-6 wow fadeInUp estate-item" data-wow-delay="0.1s">
                             <div class="property-item rounded overflow-hidden">
@@ -533,7 +582,24 @@
                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#${carouselId}Modal">Click to See Pictures</button>
                                </div>`;
                     $('.properties').append(estateHtml);
+                    updateModal(estate, index);
                 });
+            }
+            function updateModal(estate, index) {
+                var carouselId = `carouselEstate${index}Modal`;
+                var modalExists = $(`#${carouselId}`).length > 0;
+
+                // Modal içeriği için carousel item'larını güncelleyin veya oluşturun.
+                var carouselInnerHtml = estate.estatePictures.map((picture, pictureIndex) => {
+                    var activeClass = pictureIndex === 0 ? ' active' : '';
+                    return `
+                        <div class="carousel-item${activeClass}">
+                            <img src="data:image/jpeg;base64,${picture}" class="d-block w-100" alt="Image ${pictureIndex}">
+                        </div>`;
+                }).join('');
+
+                // Carousel içeriğini güncelleyin veya yeni içerik ekleyin.
+                $(`#${carouselId} .carousel-inner`).html(carouselInnerHtml);
             }
         });
         </script>
