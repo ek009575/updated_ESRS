@@ -69,6 +69,7 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Custom Components:</h6>
                         <a class="collapse-item" href="/esrsProjectUI/adminDashboard/addEstate/addEstate.html">Add Property</a>
+                        
                     </div>
                 </div>
             </li>
@@ -317,9 +318,51 @@
                         <div class="card-header py-3">
                             <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
                         </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <a href="/esrsProjectUI/adminDashboard/addEstate/addEstate.html"><button class="btn btn-primary">Add property</button></a>
+                        <div class="row mt-3">
+                            <div class="col-md-2">
+                                <input id="numberOfRoomsFilter" type="number" class="form-control" placeholder="Enter Number of Rooms">
+                            </div>
+                            <div class="col-md-2">
+                                <input id="cityFilter" type="text" class="form-control" placeholder="Enter City Name">
+
+                            </div>
+                            <div class="col-md-2">
+                                <input id="postCodeFilter" type="text" class="form-control" placeholder="Enter PostCode">
+
+                            </div>
+                            
+                            <div class="col-md-2">
+                                <select id="propertyTypeFilter" class="form-control">
+                                    <option value="">Select Property Type</option>
+                                    <option value="Apartment">Apartment</option>
+                                    <option value="Villa">Villa</option>
+                                    <option value="Home">Home</option>
+                                    <option value="Office">Office</option>
+                                    <option value="Building">Building</option>
+                                    <option value="Townhouse">Townhouse</option>
+                                    <option value="Shop">Shop</option>
+                                    <option value="Garage">Garage</option>
+                                    <!-- Diğer property type seçenekleri buraya eklenebilir -->
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <select id="estateTypeFilter" class="form-control">
+                                    <option value="">Select Estate Type</option>
+                                    <option value="For Sale">For Sale</option>
+                                    <option value="For Rent">For Rent</option>
+                                    <option value="Daily Rent">Daily Rent</option>
+                                </select>
+                            </div>
+                            
+                            
+                            
+                            
+                        </div>
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <button id="applyFilterBtn" class="btn btn-primary">Apply Filter</button>
+                                </div>
+                            </div>
 
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                    
@@ -333,6 +376,7 @@
                                             <th>Headline</th>
                                             <th>estateType</th>
                                             <th>PropertyType</th>
+                                          
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -421,7 +465,7 @@
 <script>
    $(document).ready(function() {
     var access_token = localStorage.getItem('accessToken');
-    
+
     // Kullanıcı yetkilendirme kontrolü
     $.ajax({
         type: "GET",
@@ -448,52 +492,45 @@
                 "Authorization": `Bearer ${access_token}`
             },
             success: function(data) {
-                // Tabloyu doldur
+                console.log(data);  // Sunucudan gelen yanıtı konsola loglayarak yapıyı gözlemleyin
                 var tableBody = $('#displayArea');
                 tableBody.empty(); // Önceki verileri temizle
                 data.forEach(function(estate) {
-                    var estateTypeText = getEstateTypeText(estate.estateType); // estateType için dönüşüm
-                    var propertyTypeText = getPropertyTypeText(estate.propertyType); // propertyType için dönüşüm
+                    var estateTypeText = getEstateTypeText(estate.estateType);
+                    var propertyTypeText = getPropertyTypeText(estate.propertyType);
                     var row = `<tr>
                         <td>${estate.numberOfRooms}</td>
                         <td>${estate.city}</td>
                         <td>${estate.postCode}</td>
                         <td>${estate.description}</td>
                         <td>${estate.headline}</td>
-                        <td>${estateTypeText}</td> <!-- Dönüştürülmüş estateType değeri -->
-                        <td>${propertyTypeText}</td> <!-- Dönüştürülmüş propertyType değeri -->
-                        <td><button class="btn btn-danger delete-btn" data-estate-id="${estate.id}">Kaldır</button><!-- Kaldır butonu -->
-                            <button class="btn btn-info details-btn" data-estate-id="${estate.id}">Detaylar</button> <!-- Detaylar butonu -->
-                        </td> 
+                        <td>${estateTypeText}</td>
+                        <td>${propertyTypeText}</td>
                         
+                        <td><button class="btn btn-danger delete-btn" data-estate-id="${estate.id}">Kaldır</button>
+                            <button class="btn btn-info details-btn" data-estate-id="${estate.id}">Detaylar</button>
+                        </td>
                     </tr>`;
                     tableBody.append(row);
                 });
-                $('.details-btn').click(function() {
-                var estateId = $(this).data('estate-id'); // Butondan gayrimenkul ID'sini al
-                window.location.href = `/estateDetails.html?estateId=${estateId}`; // Detaylar sayfasına yönlendir
-            });
-                $('.delete-btn').click(function() {
-                var estateId = $(this).data('estate-id'); // Butondan gayrimenkul ID'sini al
-                deleteEstate(estateId); // Silme işlevini çağır
-            });
             },
             error: function(error) {
                 console.error('Error fetching estates:', error);
             }
         });
     }
-    
-    function getEstateTypeText(estateType){
-        switch(estateType){
+
+    function getEstateTypeText(estateType) {
+        switch (estateType) {
             case 0:
                 return "For Sale";
             case 1:
                 return "For Rent";
             case -1:
-                return "Daily Rent"        
+                return "Daily Rent"
         }
     }
+
     // propertyType için dönüşüm fonksiyonu
     function getPropertyTypeText(propertyType) {
         switch (propertyType) {
@@ -517,28 +554,59 @@
                 return "Unknown";
         }
     }
+
     function deleteEstate(estateId) {
-    $.ajax({
-        type: "DELETE",
-        url: `https://localhost:7070/DeleteEstate/${estateId}`,
-        headers: {
-            "Authorization": `Bearer ${access_token}`
-        },
-        success: function() {
-            var confirmMessage = confirm("Silmek istediginden emin misin");
-            if (confirmMessage) {
-                console.log('Estate deleted successfully');
-                getEstates(); // Tabloyu güncellemek için gayrimenkul listesini yeniden al
-                } 
-            else {
+        $.ajax({
+            type: "DELETE",
+            url: `https://localhost:7070/DeleteEstate/${estateId}`,
+            headers: {
+                "Authorization": `Bearer ${access_token}`
+            },
+            success: function() {
+                var confirmMessage = confirm("Silmek istediginden emin misin");
+                if (confirmMessage) {
+                    console.log('Estate deleted successfully');
+                    getEstates(); // Tabloyu güncellemek için gayrimenkul listesini yeniden al
+                } else {
                     console.log("do nothing")
                 }
-            
-        },
-        error: function(error) {
-            console.error('Error deleting estate:', error);
-        }
+
+            },
+            error: function(error) {
+                console.error('Error deleting estate:', error);
+            }
+        });
+    }
+
+    // Arama filtresini uygula
+    $('#applyFilterBtn').click(function() {
+    applyFilters();
     });
-}
+
+    function applyFilters() {
+        var propertyTypeFilter = $('#propertyTypeFilter').val();
+        var estateTypeFilter = $('#estateTypeFilter').val();
+        var cityFilter = $('#cityFilter').val().trim();
+        var numberOfRoomsFilter = $('#numberOfRoomsFilter').val().trim();
+        var postCodeFilter = $('#postCodeFilter').val().trim(); // Posta kodu filtresi
+
+        $('#dataTable tbody tr').each(function() {
+            var propertyTypeText = $(this).find('td:eq(6)').text().trim();
+            var estateTypeText = $(this).find('td:eq(5)').text().trim();
+            var cityText = $(this).find('td:eq(1)').text().trim();
+            var numberOfRoomsText = $(this).find('td:eq(0)').text().trim();
+            var postCodeText = $(this).find('td:eq(2)').text().trim(); 
+
+            if ((propertyTypeFilter === '' || propertyTypeText === propertyTypeFilter) &&
+                (estateTypeFilter === '' || estateTypeText === estateTypeFilter) &&
+                (cityFilter === '' || cityText.toLowerCase().includes(cityFilter.toLowerCase())) &&
+                (numberOfRoomsFilter === '' || numberOfRoomsText === numberOfRoomsFilter) &&
+                (postCodeFilter === '' || postCodeText === postCodeFilter)) { 
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+    }
 });
 </script>
