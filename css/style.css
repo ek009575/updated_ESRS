@@ -438,3 +438,38 @@
     padding-right: 0;
     border-right: none;
 }
+
+
+/*** Property List ***/
+.property-item img {
+    width: 100%; /* Genişliği div'e sığdır */
+    height: 300px; /* Sabit bir yükseklik */
+    object-fit: cover; /* Resmi kaplayacak şekilde ölçeklendir */
+}
+
+/*** Carousel Image Sizes ***/
+.carousel-item img {
+    width: 100%; /* Tüm resimlerin genişliğini carousel genişliğine uydur */
+    max-height: 500px; /* Maksimum resim yüksekliğini sınırla */
+    object-fit: contain; /* Resmin boyutlarını, belirlenen alana sığacak şekilde ayarla */
+    margin: auto;
+}
+.carousel {
+    background-color: transparent;
+}
+
+/* Modal arka planını şeffaf yap */
+.modal-backdrop.show {
+    opacity: 0.5; /* Tamamen şeffaf */
+}
+
+/* Modal içeriğinin arka planını şeffaf yap */
+.modal-content {
+    background-color: transparent; /* Arka planı şeffaf yap */
+    border: none; /* Kenarlıkları kaldır */
+}
+.modal-body-success {
+    background-color: #20c997; /* Bootstrap'in "success" renginin hex kodu */
+    color: #fff; /* Metin rengi için beyaz, kontrastı artırmak adına */
+}
+
