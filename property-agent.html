@@ -62,13 +62,12 @@
                             <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown">Property</a>
                             <div class="dropdown-menu rounded-0 m-0">
                                 <a href="property-list.html" class="dropdown-item">Property List</a>
-                                <a href="property-type.html" class="dropdown-item active">Property Type</a>
                                 <a href="property-agent.html" class="dropdown-item">Property Agent</a>
                             </div>
                         </div>
-                        <div class="nav-item dropdown">
+                        <!--<div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
-                            <!-- <div class="dropdown-menu rounded-0 m-0">
+                             <div class="dropdown-menu rounded-0 m-0">
                                 <a href="testimonial.html" class="dropdown-item">Testimonial</a>
                                 <a href="404.html" class="dropdown-item">404 Error</a>
                             </div> -->
@@ -88,14 +87,13 @@
                     <h1 class="display-5 animated fadeIn mb-4">Property Agent</h1> 
                         <nav aria-label="breadcrumb animated fadeIn">
                         <ol class="breadcrumb text-uppercase">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item"><a href="#">Pages</a></li>
+                            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                            <li class="breadcrumb-item"><a href="property-list.html">Properties</a></li>
                             <li class="breadcrumb-item text-body active" aria-current="page">Property Agent</li>
                         </ol>
                     </nav>
                 </div>
                 <div class="col-md-6 animated fadeIn">
-                    <img class="img-fluid" src="img/header.jpg" alt="">
                 </div>
             </div>
         </div>
@@ -109,7 +107,7 @@
                     <p>Meet Our Professional Team To Give Your Dream.</p>
                 </div>
                 <div id="estate-agents-list" class="row g-4">
-                    <!-- Burada estate agentlerin dinamik olarak ekleneceği yer -->
+                    <!-- add estate agents here -->
                 </div>
             </div>
         </div>
@@ -227,14 +225,14 @@
         type: 'GET',
         dataType: 'json',
         success: function(data){
-            // Verileri işle
+            // process data
             var agentsList = $('#estate-agents-list');
             $.each(data, function(index, agent){
-                // Her bir estate agent için HTML oluştur
+                // create HTML for each estate agent
                 var agentHTML = '<div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="' + (0.1 * index) + 's">';
                 agentHTML += '<div class="team-item rounded overflow-hidden">';
                 agentHTML += '<div class="position-relative">';
-                agentHTML += '<img class="img-fluid" src="img/agent.jpg" alt="' + agent.estateAgent.name + '" >'; // Burada gerçek fotoğraf yerine placeholder koydum
+                agentHTML += '<img class="img-fluid" src="img/agent.jpg" alt="' + agent.estateAgent.name + '" >';
                 agentHTML += '<div class="position-absolute start-50 top-100 translate-middle d-flex align-items-center">';
                 agentHTML += '</div>';
                 agentHTML += '</div>';

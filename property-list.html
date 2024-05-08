@@ -62,7 +62,6 @@
                         <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown">Property</a>
                         <div class="dropdown-menu rounded-0 m-0">
                             <a href="property-list.html" class="dropdown-item">Property List</a>
-                            <a href="property-type.html" class="dropdown-item active">Property Type</a>
                             <a href="property-agent.html" class="dropdown-item">Property Agent</a>
                         </div>
                     </div>
@@ -88,14 +87,11 @@
                     <h1 class="display-5 animated fadeIn mb-4">Property List</h1> 
                         <nav aria-label="breadcrumb animated fadeIn">
                         <ol class="breadcrumb text-uppercase">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item"><a href="#">Pages</a></li>
+                            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                            <li class="breadcrumb-item"><a href="about.html">About</a></li>
                             <li class="breadcrumb-item text-body active" aria-current="page">Property List</li>
                         </ol>
                     </nav>
-                </div>
-                <div class="col-md-6 animated fadeIn">
-                    <img class="img-fluid" src="img/header.jpg" alt="">
                 </div>
             </div>
         </div>
@@ -172,16 +168,12 @@
                            
                         </div>
                         <br>
-                        <div class="col-12 text-center">
-                            <a class="btn btn-primary py-3 px-5" href="">Browse More Property</a>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <!-- Property List End -->
 
-         <!-- Property List Trial with Ajax Start -->
 
 
         <!-- Contact Start -->
@@ -296,7 +288,7 @@
                     for (var i = 0; i < len; i++) {
                         binary += String.fromCharCode(byteArray[i]);
                     }
-                    // window.btoa() fonksiyonu binary string'i base64'e çevirir
+                    // convert binary string to base64
                     return window.btoa(binary);
                 }
 
@@ -346,7 +338,7 @@
                     else if (estate.propertyType == 7) {
                         propertyType = "Garage"
                     }
-                    // Oluşturulan Base64 string ile HTML içeriğinin hazırlanma
+                    //  Prepare the HTML with created Base64 string
                     var carouselId = `carouselEstate${index}`;
                     var estateHtml = `
                         <div class="col-lg-4 col-md-6 wow fadeInUp estate-item" data-wow-delay="0.1s">
@@ -428,7 +420,7 @@
                         </div>
                     </div>`;
                     document.querySelector('.properties').innerHTML += estateHtml;
-                    // Modal HTML'ini sayfaya ekleyin
+                    // Add Modal HTML to Page
                     document.body.innerHTML += modalHtml;
                     
 
@@ -453,10 +445,9 @@
                 }
             });
             $(document).on('click', '.btn-dark', function(e) {
-                e.preventDefault(); // Formun normal submit işlemini engelle
-                console.log("Butona Tıklandı");
+                e.preventDefault(); 
 
-                // Form verilerini al
+                // Get the form data
                 var searchData = {
                     searchText: $('#searchText').val(),
                     propertyType: parseInt($('#propertyType').val(), 10),
@@ -465,18 +456,18 @@
                     city: $('#city').val(),
                     postCode: $('#postCode').val()
                 };
-                console.log("Arama butonuna tıklandı, form verileri: ", searchData);
+                console.log("search button clicked, form data: ", searchData);
 
-                // API'ye AJAX isteği gönder
+                // send AJAX request to API
                 $.ajax({
                     url: 'https://localhost:7070/GetAllEstates',
                     type: 'GET',
                     data: searchData,
                     dataType: 'json',
                     success: function(estates) {
-                        // İşlem başarılı olduğunda, cevabı işle
+                        // success response
                         console.log('Success:', estates);
-                        updateProperties(estates); // Güncellenmiş fonksiyon adı
+                        updateProperties(estates); 
                     },
                     error: function(xhr, status, error) {
                         console.error('Error:', error);
@@ -484,9 +475,9 @@
                 });
             });
 
-            // API'den gelen verileri sayfada göster
+            // Show data comes from API
             function updateProperties(estates) {
-                $('.properties').empty(); // Önceki içeriği temizle
+                $('.properties').empty(); 
                 estates.forEach(function(estate, index) {
                     var estateType = "";
                     if (estate.estateType == 0)  {
@@ -527,7 +518,7 @@
                         propertyType = "Garage"
                     }
                     
-                    // Emlak bilgilerini kullanarak HTML içeriği oluştur
+                    // Create HTML with estate information
                     var carouselId = `carouselEstate${index}`;
                     var estateHtml = `
                         <div class="col-lg-4 col-md-6 wow fadeInUp estate-item" data-wow-delay="0.1s">
@@ -558,7 +549,7 @@
                 var carouselId = `carouselEstate${index}Modal`;
                 var modalExists = $(`#${carouselId}`).length > 0;
 
-                // Modal içeriği için carousel item'larını güncelleyin veya oluşturun.
+                // Update or Create carousal item for Modal
                 var carouselInnerHtml = estate.estatePictures.map((picture, pictureIndex) => {
                     var activeClass = pictureIndex === 0 ? ' active' : '';
                     return `
@@ -567,12 +558,11 @@
                         </div>`;
                 }).join('');
 
-                // Carousel içeriğini güncelleyin veya yeni içerik ekleyin.
+                // Update or Create carousal
                 $(`#${carouselId} .carousel-inner`).html(carouselInnerHtml);
             }
         });
         </script>
-
 </body>
 
 </html>
