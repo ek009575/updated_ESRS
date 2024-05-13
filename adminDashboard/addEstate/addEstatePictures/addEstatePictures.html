@@ -11,68 +11,61 @@
 <body>
     <div class="container-fluid d-flex justify-content-center align-items-center vh-100">
         <div class="card p-4">       
-            <form action="/" class="dropzone" id="mydropzone"></form>
+            <!-- Dropzone için form -->
+            <form class="dropzone" id="mydropzone" action="https://localhost:7070/AddEstatePhotos/8" method="post" enctype="multipart/form-data"></form>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.2/min/dropzone.min.js"></script>
             <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-            <script>
-                let access_token = localStorage.getItem('accessToken')
-                $(document).ready(function() {
-                
-                $.ajax({
-                    type: "GET",
-                    url: "https://localhost:7070/Account/IsAuthorize",
-                    headers: {
-                        "Authorization": `Bearer ${access_token}`
-                    }, 
-                    success: function(response) {
-                    
-                    },
-                    error: function(error) {
-                        console.error('Error:', error);
-                        window.location.href = '/esrsProjectUI/adminDashboard/account/loginpage.html';
-                    }
-                });
-            });
-                
-                var base64String; // Declare base64String in a broader scope
-                var hashValue = window.location.hash; //urldeki estate id yi almak için hash value yu alıyoruz
-
-                Dropzone.options.mydropzone = {
-                    paramName: "file", // The name that will be used to transfer the file
-                    maxFilesize: 2, // MB
-                    acceptedFiles: "image/*",
-                    init: function() {
-                        this.on("addedfile", function(file) {  //That part is event listener
-                            // Read the file and convert it to Base64
-                            var reader = new FileReader();  //this reads the file
-                            reader.onload = function() {  //if read part is completed succesfully, the part gonna be triggered automatically
-                                base64String = reader.result.split(',')[1];
-                                // Now you can use the base64String as needed
-                                console.log(base64String);
-
-                                // Send the Base64 string to the API endpoint
-                                $.ajax({
-                                    type: "POST",
-                                    url: "https://localhost:7070/AddEstatePhotos/" + hashValue,
-                                    headers: {
-                                        "Authorization": `Bearer ${access_token}`
-                                    },
-                                    data: JSON.stringify({ base64String: base64String }),
-                                    contentType: "multipart/form", // burayı chate sor. çünkü swaggerda böyle yazıyor content type bu bekleniyor.
-                                    success: function (response) {
-                                        window.location.href = "/esrsProjectUI/adminDashboard";
-                                    },
-                                    error: function (error) {
-                                        console.error("Error:", error);
-                                    }
-                                });
-                            };  //the part 
-                            reader.readAsDataURL(file);  //that part is necessary to complete whole process read file and send request to API
-                        });
-                    }
-                };
-            </script>
         </div>
     </div>
+
+    <script>
+        // localStorage'dan access token alınıyor
+        let access_token = localStorage.getItem('accessToken');
+
+        // Dropzone settings
+        Dropzone.options.mydropzone = {
+            paramName: "file", 
+            maxFilesize: 10, 
+            acceptedFiles: "image/*",
+            headers: {
+                "Authorization": `Bearer ${access_token}`
+            },
+            init: function() {
+                // Dosya yükleme başarılı olduğunda yapılacak işlemler
+                this.on("success", function(file, response) {
+                    // Dosya başarıyla yüklendiğinde yapılacak işlemler buraya yazılabilir
+                   console.log("dosyalar başarıyla yüklendi")
+                });
+
+                // Dosya yükleme sırasında bir hata olduğunda yapılacak işlemler
+                this.on("error", function(file, errorMessage) {
+                    console.error("Hata:", errorMessage);
+                });
+            }
+        };
+
+        $(document).ready(function() {
+            // URL'deki estate id'si alınıyor
+            let hashValue = window.location.hash;
+
+            // Sayfa yüklendiğinde yetkilendirme kontrolü yapılıyor
+            $.ajax({
+                type: "GET",
+                url: "https://localhost:7070/Account/IsAuthorize",
+                headers: {
+                    "Authorization": `Bearer ${access_token}`
+                }, 
+                success: function(response) {
+                    // Yetkilendirme başarılıysa bir işlem yapılmasına gerek yok
+                },
+                error: function(error) {
+                    console.error('Hata:', error);
+                    // Yetkilendirme hatası durumunda kullanıcıyı giriş sayfasına yönlendir
+                    window.location.href = '/esrsProjectUI/adminDashboard/account/loginpage.html';
+                }
+            });           
+        });
+    </script>
 </body>
 </html>
+
