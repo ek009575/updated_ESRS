@@ -345,7 +345,7 @@
                                     <option value="Townhouse">Townhouse</option>
                                     <option value="Shop">Shop</option>
                                     <option value="Garage">Garage</option>
-                                    <!-- Diğer property type seçenekleri buraya eklenebilir -->
+                                    <!-- Other property type options will be added here -->
                                 </select>
                             </div>
                             <div class="col-md-2">
@@ -462,31 +462,33 @@
        
     </script>
     <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl"> <!-- Changed to modal-xl for more space -->
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="detailsModalLabel">Estate Details</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div id="carouselEstateDetails" class="carousel slide" data-ride="carousel" data-interval="false"> <!-- data-interval="false" to stop auto-cycling -->
-                    <div class="carousel-inner" id="carouselDetailsInner">
-                        <!-- A single carousel item with all details -->
-                        <div class="carousel-item active">
-                            <table class="table">
-                                <tbody id="detailsTableBody">
-                                    <!-- Details will be dynamically inserted here -->
-                                </tbody>
-                            </table>
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailsModalLabel">Estate Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="carouselEstateDetails" class="carousel slide" data-ride="carousel">
+                        <div class="carousel-inner" id="carouselDetailsInner">
+                            <!-- Images will be inserted here dynamically -->
                         </div>
+                        <a class="carousel-control-prev" href="#carouselEstateDetails" role="button" data-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="carousel-control-next" href="#carouselEstateDetails" role="button" data-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+    
 
     
 </body>
@@ -497,7 +499,7 @@
    $(document).ready(function() {
     var access_token = localStorage.getItem('accessToken');
 
-    // Kullanıcı yetkilendirme kontrolü
+    // User authorization control
     $.ajax({
         type: "GET",
         url: "https://localhost:7070/Account/IsAuthorize",
@@ -505,7 +507,7 @@
             "Authorization": `Bearer ${access_token}`
         },
         success: function(response) {
-            // Kullanıcı yetkilendirilmişse, gayrimenkul verilerini al
+            // If user has authorization, get estates then
             getEstates();
         },
         error: function(error) {
@@ -514,7 +516,7 @@
         }
     });
 
-    // Gayrimenkul verilerini al ve tabloyu doldur
+    // get estates datas and fill table
     function getEstates() {
         $.ajax({
             type: "GET",
@@ -523,9 +525,9 @@
                 "Authorization": `Bearer ${access_token}`
             },
             success: function(data) {
-                console.log(data);  // Sunucudan gelen yanıtı konsola loglayarak yapıyı gözlemleyin
+                console.log(data);  // It observes the structure by logging the response from the server to the console
                 var tableBody = $('#displayArea');
-                tableBody.empty(); // Önceki verileri temizle
+                tableBody.empty(); // clear from previous datas
                 data.forEach(function(estate) {
                     var estateTypeText = getEstateTypeText(estate.estateType);
                     var propertyTypeText = getPropertyTypeText(estate.propertyType);
@@ -540,8 +542,8 @@
                         <td>${estateTypeText}</td>
                         <td>${propertyTypeText}</td>
                         
-                        <td><button class="btn btn-danger delete-btn" data-estate-id="${estate.id}">Kaldır</button>
-                            <button class="btn btn-info details-btn" data-estate-id="${estate.id}">Detaylar</button>
+                        <td><button class="btn btn-danger delete-btn" data-estate-id="${estate.id}">Delete</button>
+                            <button class="btn btn-info details-btn" data-estate-id="${estate.id}">Details</button>
                         </td>
                     </tr>`;
                     tableBody.append(row);
@@ -581,9 +583,9 @@
         }
     }
     $(document).on('click', '.details-btn', function() {
-        var estateId = $(this).data('estate-id'); // Butondan gayrimenkul ID'sini al
+        var estateId = $(this).data('estate-id'); // get estate ID by using button
 
-        // AJAX isteği ile GetAllEstates endpoint'inden tüm verileri al
+        // Get whole data with the help of AJAX request by using GetAllEstates endpoint
         $.ajax({
             type: "GET",
             url: "https://localhost:7070/GetAllEstates",
@@ -591,9 +593,9 @@
                 "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
             },
             success: function(data) {
-                var estate = data.find(estate => estate.id === estateId); // ID'ye göre gayrimenkulü bul
+                var estate = data.find(estate => estate.id === estateId); // get estate by depending on ID
                 if (estate) {
-                    updateDetailsModal(estate); // Modalı güncelle
+                    updateDetailsModal(estate); // update modal
                 }
             },
             error: function(error) {
@@ -602,7 +604,7 @@
         });
     });
 
-    // Detaylar modalını güncelleyen fonksiyon
+    // Function updating modal details
     function updateDetailsModal(estate) {
     var $detailsTableBody = $('#detailsTableBody').empty();
     var details = [
@@ -615,7 +617,7 @@
         { label: 'Property Type', value: estate.propertyType }
     ];
 
-    // Tablo detaylarını doldur
+    // Fill with table details
     details.forEach(function(detail) {
         var row = `<tr>
             <th scope="row">${detail.label}</th>
@@ -624,22 +626,21 @@
         $detailsTableBody.append(row);
     });
 
-    // Karusel için resimleri ve detayları ekle
+    // Add pictures and details for carousel
     var $carouselInner = $('#carouselDetailsInner').empty();
     if (estate.estatePictures.length > 0) {
         estate.estatePictures.forEach(function(picture, index) {
             var itemClass = index === 0 ? 'carousel-item active' : 'carousel-item';
             var carouselItem = `<div class="${itemClass}">
-                <img src="${picture.url}" class="d-block w-100" alt="Estate Image">
+                <img src="data:image/jpeg;base64,${picture}" alt="Estate Image" class="d-block w-100" />
                 <div class="carousel-caption d-none d-md-block">
-                    <h5>${estate.headline}</h5>
-                    <p>${estate.description}</p>
                 </div>
+                ${details.map(detail => `<p><strong>${detail.label}:</strong> ${detail.value}</p>`).join('')}
             </div>`;
             $carouselInner.append(carouselItem);
         });
     } else {
-        // Resim yoksa varsayılan içerik ve detaylar
+        // If there are no images, display default content
         var defaultItem = `<div class="carousel-item active">
             <p class="d-block w-100 text-center">No images available.</p>
             <div class="carousel-caption d-none d-md-block">
@@ -651,9 +652,10 @@
         $carouselInner.append(defaultItem);
     }
 
-    // Modalı göster
+    // Show modal
     $('#detailsModal').modal('show');
 }
+
     function getEstateTypeText(estateType) {
         switch (estateType) {
             case 0:
@@ -665,7 +667,7 @@
         }
     }
 
-    // propertyType için dönüşüm fonksiyonu
+    // Conversion function for propertyType
     function getPropertyTypeText(propertyType) {
         switch (propertyType) {
             case 0:
@@ -700,7 +702,7 @@
                 var confirmMessage = confirm("Silmek istediginden emin misin");
                 if (confirmMessage) {
                     console.log('Estate deleted successfully');
-                    getEstates(); // Tabloyu güncellemek için gayrimenkul listesini yeniden al
+                    getEstates(); // Reimport property list to update table
                 } else {
                     console.log("do nothing")
                 }
@@ -712,7 +714,7 @@
         });
     }
 
-    // Arama filtresini uygula
+    // apply search filter
     $('#applyFilterBtn').click(function() {
     applyFilters();
     });

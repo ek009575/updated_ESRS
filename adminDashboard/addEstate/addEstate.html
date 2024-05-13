@@ -54,9 +54,9 @@
             <div class="form-group">
                 <select class="form-control" id="EstateAgentID">
                     <option value="">Select Estate Agent</option>
-                    <!-- Burada estate ajanlarının dinamik olarak yükleneceği bir yapı olabilir -->
-                    <!-- Örneğin, bu kısımda JavaScript ile AJAX çağrısı yaparak estate ajanlarını alabilirsiniz -->
-                    <!-- Dönen veriyi bu dropdown içine yerleştirebilirsiniz -->
+                    <!-- Estate agents will be shown dynamically-->
+                    <!-- JS call for agents and list them in here-->
+                  
                 </select>
             </div>
             <button id="submit" type="submit" class="btn btn-primary">Add property</button>
@@ -69,7 +69,7 @@
 </div>
 
 <script>
-    // Sayfa yüklendiğinde çalışacak olan fonksiyon
+    // Function that will run when the page loads
     let access_token = localStorage.getItem('accessToken')
     $(document).ready(function() {
         
@@ -88,14 +88,14 @@
             }
         });
 
-        // Estate ajanlarını getiren AJAX isteği
+        // AJAX request fetching Estate agents
         $.ajax({
             type: "GET",
             url: "https://localhost:7070/Account/GetAllAgents",
             success: function(response) {
-                // Dropdown menüsüne estate ajanlarını ekleme
+                // Adding estate agents to the dropdown menu
                 var dropdown = $('#EstateAgentID');
-                dropdown.empty(); // Mevcut seçenekleri temizle
+                dropdown.empty(); // Clear current options
 
                 $.each(response, function(index, agent) {
                     dropdown.append($('<option></option>').attr('value', agent.id).text(agent.name + ' ' + agent.surname));
@@ -113,7 +113,7 @@
     submitButton.addEventListener("click", buttonClick, false);
 
     
-    //sayfa yüklenirken eventine ajax get ile https://localhost:7070/Account/GetAllAgents buraya istek atıp dönen data içindeki name surname kısmını dropdown da göster , dropdown itemlerinin value su o name surname deki kişinin id si olsun
+   //fill details on the form then submit it 
 
     
     function buttonClick(event) {
@@ -131,14 +131,7 @@
         };
         console.log(JSON.stringify(estate))
 
-        // // Access token'i saklama
-        // var accessToken = "your_access_token";
-        // localStorage.setItem("accessToken", accessToken);
-
-        // // Access token'i al
-        // var storedAccessToken = localStorage.getItem("accessToken");
-        // console.log(storedAccessToken); // Bu console çıktısı tarayıcınızın konsolunda gösterilecek
-        //sonra bu access tokeni alıp 
+        //call request to add estate by depending on provided input
 
         $.ajax({
             type: "POST",
@@ -152,10 +145,10 @@
                 
                 var confirmMessage = confirm("Ev resmi eklemek ister misiniz?");
                 if (confirmMessage) {
-                    // Kullanıcı ev resmi eklemek istiyorsa belirtilen sayfaya yönlendir
+                    // If the user wants to add a house image, redirect to the specified page
                     window.location.href = "/esrsProjectUI/adminDashboard/addEstate/addEstatePictures/addEstatePictures.html#" + response.id;
                 } else {
-                    // Kullanıcı şu anda ev resmi eklemek istemiyorsa, admin panelinin ana sayfasına yönlendir
+                    // If the user does not want to add a house image at this time, redirect to the home page of the admin panel
                     window.location.href = "/esrsProjectUI/adminDashboard/index.html";
                 }
             },
