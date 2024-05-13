@@ -41,7 +41,7 @@
 </div>
 
 <script>
-    // Sayfa yüklendiğinde çalışacak olan fonksiyon
+    // It is a function when page is initialized
     const access_token = localStorage.getItem('accessToken')
     $(document).ready(function() {
         
@@ -67,8 +67,7 @@
     submitButton.addEventListener("click", buttonClick, false);
 
     
-    //sayfa yüklenirken eventine ajax get ile https://localhost:7070/Account/GetAllAgents buraya istek atıp dönen data içindeki name surname kısmını dropdown da göster , dropdown itemlerinin value su o name surname deki kişinin id si olsun
-
+    
     
     function buttonClick(event) {
      
@@ -82,14 +81,7 @@
         };
         console.log(JSON.stringify(estate))
 
-        // // Access token'i saklama
-        // var accessToken = "your_access_token";
-        // localStorage.setItem("accessToken", accessToken);
-
-        // // Access token'i al
-        // var storedAccessToken = localStorage.getItem("accessToken");
-        // console.log(storedAccessToken); // Bu console çıktısı tarayıcınızın konsolunda gösterilecek
-        //sonra bu access tokeni alıp 
+        // get access token. If user has no authorization, leads them to login page
 
         $.ajax({
             type: "POST",
@@ -105,10 +97,10 @@
                 
                 var confirmMessage = confirm("Agent Eklemek ister misin?");
                 if (confirmMessage) {
-                    // Kullanıcı ev resmi eklemek istiyorsa belirtilen sayfaya yönlendir
+                    // If the user wants to add a house image, redirect to the specified page
                     window.location.href = "/esrsProjectUI/adminDashboard/index.html";
                 } else {
-                    // Kullanıcı şu anda ev resmi eklemek istemiyorsa, admin panelinin ana sayfasına yönlendir
+                    // If the user does not want to add a house image at this time, redirect to the home page of the admin panel
                     window.location.href = "/esrsProjectUI/adminDashboard/index.html";
                 }
                

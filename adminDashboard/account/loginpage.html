@@ -29,7 +29,7 @@
 <script>
    $(document).ready(function() {
     $('#loginForm').on('submit', function(e) {
-        e.preventDefault(); // Formun varsayılan submit işlemini engelle
+        e.preventDefault(); // Prevent the form's default submit action
 
         var userData = {
             email: $('#email').val(),
@@ -44,10 +44,10 @@
             success: function(response) {
                 console.log('Login successful:', response);
                 
-                // Sadece e-posta adresi kontrolü yaparak yönlendirme
+                // Forwarding by checking only the e-mail address
                 if(response.access_token) {
-                    localStorage.setItem("accessToken", response.access_token); // Token'ı kaydet
-                    window.location.href = '/esrsProjectUI/adminDashboard/index.html'; // Yönlendirme yap
+                    localStorage.setItem("accessToken", response.access_token); // Register token
+                    window.location.href = '/esrsProjectUI/adminDashboard/index.html'; // forward for the adress
                 } else {
                     alert("Login failed. Please check your email.");
                 }
