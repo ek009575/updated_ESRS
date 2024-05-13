@@ -62,16 +62,8 @@
                             <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown">Property</a>
                             <div class="dropdown-menu rounded-0 m-0">
                                 <a href="property-list.html" class="dropdown-item">Property List</a>
-                                <a href="property-type.html" class="dropdown-item active">Property Type</a>
                                 <a href="property-agent.html" class="dropdown-item">Property Agent</a>
                             </div>
-                        </div>
-                        <!-- <div class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
-                            <div class="dropdown-menu rounded-0 m-0">
-                                <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-                                <a href="404.html" class="dropdown-item">404 Error</a>
-                            </div> -->
                         </div>
                         <a href="contact.html" class="nav-item nav-link">Contact</a>
                     </div>
@@ -88,14 +80,11 @@
                     <h1 class="display-5 animated fadeIn mb-4">Contact Us</h1> 
                         <nav aria-label="breadcrumb animated fadeIn">
                         <ol class="breadcrumb text-uppercase">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item"><a href="#">Pages</a></li>
+                            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                            <li class="breadcrumb-item"><a href="about.html">About</a></li>
                             <li class="breadcrumb-item text-body active" aria-current="page">Contact</li>
                         </ol>
                     </nav>
-                </div>
-                <div class="col-md-6 animated fadeIn">
-                    <img class="img-fluid" src="img/header.jpg" alt="">
                 </div>
             </div>
         </div>
@@ -165,7 +154,7 @@
                                         <div class="form-floating">
                                             <select id="estateAgentSelect" class="form-select border-1 py-3">
                                                 <option value="">Choose An Agent-</option>
-                                                <!-- Dinamik olarak eklenen diğer seçenekler burada yer alacak -->
+                                                <!-- add agents' email here-->
                                             </select>
                                         </div>
                                     </div>
@@ -263,14 +252,13 @@
     <script src="js/main.js"></script>
     <script>
         $(document).ready(function() {
-    // Default e-posta adresi
+    // Default e-mail
     var defaultEmail = "aridurutayran@gmail.com";
 
     $(document).on('click', '.btn-primary', function(e) {
-        e.preventDefault(); // Formun normal submit işlemini engelle
-        console.log("Butona Tıklandı");
+        e.preventDefault();
 
-        // Eğer seçili bir e-posta adresi varsa kullan, yoksa default adresi kullan
+        // Use the selected email, if not selected use default email
         var selectedEmail = $('#estateAgentSelect').val() || defaultEmail;
         console.log('Selected Email:',selectedEmail);
 
@@ -285,11 +273,11 @@
         $.ajax({
             url: 'https://localhost:7070/MailSender',
             type: 'POST',
-            contentType: 'application/json', // Gönderilen verinin türünü belirtir
+            contentType: 'application/json',
             data: JSON.stringify(mailData),
             success: function(response) {
-                // İşlem başarılı olduğunda, cevabı işle
-                console.log('Success: Email Gönderildi', response);
+                // success response
+                console.log('Success: Email has been sent', response);
             },
             error: function(xhr, status, error) {
                 console.error('Error:', error);
@@ -297,20 +285,20 @@
         });
     });
     $.ajax({
-        url: 'https://localhost:7070/GetAllEstates', // API'nin URL'si
+        url: 'https://localhost:7070/GetAllEstates',
         type: 'GET',
         dataType: 'json',
         success: function(agents) {
-            const uniqueAgents = []; // Benzersiz emlakçıları tutacak dizi
+            const uniqueAgents = []; // list for holding unique estate agents.
 
             agents.forEach(agent => {
                 const isExist = uniqueAgents.find(uAgent => uAgent.estateAgent.email === agent.estateAgent.email);
                 if (!isExist) {
-                    uniqueAgents.push(agent); // Eğer emlakçı zaten eklenmemişse, listeye ekle
+                    uniqueAgents.push(agent); // if the agent has not been added to list, add the agent
                 }
             });
 
-            // Şimdi benzersiz emlakçı listesi üzerinden giderek <select> listesini doldurabiliriz
+            // Fill unique estate agents lists and fill the <select> item
             uniqueAgents.forEach(function(agent) {
                 console.log('Estate Agent Information:', agent.estateAgent.email);
                 $('#estateAgentSelect').append($('<option>', {
@@ -326,7 +314,7 @@
 
     $('#estateAgentSelect').change(function() {
         var selectedEmail = $(this).val();
-        console.log('Selected Email:',selectedEmail); // Seçilen e-postayı konsolda göster
+        console.log('Selected Email:',selectedEmail); // Show the selected email
     });
 });
 
