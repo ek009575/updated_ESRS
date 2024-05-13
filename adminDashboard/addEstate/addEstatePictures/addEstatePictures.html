@@ -19,7 +19,6 @@
     </div>
 
     <script>
-        // localStorage'dan access token alınıyor
         let access_token = localStorage.getItem('accessToken');
 
         // Dropzone settings
@@ -31,24 +30,26 @@
                 "Authorization": `Bearer ${access_token}`
             },
             init: function() {
-                // Dosya yükleme başarılı olduğunda yapılacak işlemler
                 this.on("success", function(file, response) {
-                    // Dosya başarıyla yüklendiğinde yapılacak işlemler buraya yazılabilir
-                   console.log("dosyalar başarıyla yüklendi")
+                    var confirmMessage = confirm("Pictures added to estate do you want to continue to add more photos ? ");
+                    if (confirmMessage) {
+                        console.log("Stay on this page")
+                    } else {
+                        window.location.href = "/esrsProjectUI/adminDashboard";
+                    }
+                   console.log("Photo Addition Successfully")
                 });
 
-                // Dosya yükleme sırasında bir hata olduğunda yapılacak işlemler
                 this.on("error", function(file, errorMessage) {
                     console.error("Hata:", errorMessage);
                 });
+                
             }
         };
 
         $(document).ready(function() {
-            // URL'deki estate id'si alınıyor
             let hashValue = window.location.hash;
 
-            // Sayfa yüklendiğinde yetkilendirme kontrolü yapılıyor
             $.ajax({
                 type: "GET",
                 url: "https://localhost:7070/Account/IsAuthorize",
@@ -56,11 +57,9 @@
                     "Authorization": `Bearer ${access_token}`
                 }, 
                 success: function(response) {
-                    // Yetkilendirme başarılıysa bir işlem yapılmasına gerek yok
                 },
                 error: function(error) {
                     console.error('Hata:', error);
-                    // Yetkilendirme hatası durumunda kullanıcıyı giriş sayfasına yönlendir
                     window.location.href = '/esrsProjectUI/adminDashboard/account/loginpage.html';
                 }
             });           
