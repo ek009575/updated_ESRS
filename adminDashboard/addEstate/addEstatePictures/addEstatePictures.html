@@ -12,7 +12,7 @@
     <div class="container-fluid d-flex justify-content-center align-items-center vh-100">
         <div class="card p-4">       
             <!-- Dropzone için form -->
-            <form class="dropzone" id="mydropzone" action="https://localhost:7070/AddEstatePhotos/{{hashValue}}" method="post" enctype="multipart/form-data"></form>
+            <form class="dropzone" id="mydropzone" action="https://localhost:7070/AddEstatePhotos" method="post" enctype="multipart/form-data"></form>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.2/min/dropzone.min.js"></script>
             <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         </div>
@@ -20,7 +20,8 @@
 
     <script>
         let access_token = localStorage.getItem('accessToken');
-        let hashValue = window.location.hash;
+        let hashValue = window.location.hash.substring(1); // başındaki "#" işaretini kaldırır
+        $('#mydropzone').attr('action', `https://localhost:7070/AddEstatePhotos/${hashValue}`);
 
         // Dropzone settings
         Dropzone.options.mydropzone = {
