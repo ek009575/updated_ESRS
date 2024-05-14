@@ -522,6 +522,39 @@
                     console.log(err);
                 }
             });
+
+            $.ajax({
+            url: 'https://localhost:7070/Account/GetAllAgents',
+            type: 'GET',
+            dataType: 'json',
+            success: function(data){
+                // process the data
+                console.log(data)
+                var agentsList = $('#estate-agents-list');
+                $.each(data, function(index, agent){
+                    // Create HTML for each estate agent
+                    var agentHTML = '<div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="' + (0.1 * index) + 's">';
+                    agentHTML += '<div class="team-item rounded overflow-hidden">';
+                    agentHTML += '<div class="position-relative">';
+                    agentHTML += '<img class="img-fluid" src="img/agent.jpg" alt="' + agent.name + '" >';
+                    agentHTML += '<div class="position-absolute start-50 top-100 translate-middle d-flex align-items-center">';
+                    agentHTML += '</div>';
+                    agentHTML += '</div>';
+                    agentHTML += '<div class="text-center p-4 mt-3">';
+                    agentHTML += '<h5 class="fw-bold mb-0">' + agent.name + ' ' + agent.surname + '</h5>';
+                    agentHTML += '<small>' + agent.email + '</small>';
+                    agentHTML += '</div>';
+                    agentHTML += '</div>';
+                    agentHTML += '</div>';
+
+                    agentsList.append(agentHTML);
+                });
+            },
+            error: function(xhr, status, error){
+                console.error('Error fetching estate agents:', error);
+            }
+            });
+
             $(document).on('click', '.btn-dark', function(e) {
                 e.preventDefault();
 
@@ -639,39 +672,7 @@
                 // Create or update carousel items
                 $(`#${carouselId} .carousel-inner`).html(carouselInnerHtml);
             }
-            $.ajax({
-        url: 'https://localhost:7070/GetAllEstates',
-        type: 'GET',
-        dataType: 'json',
-        success: function(data){
-            // process the data
-            var agentsList = $('#estate-agents-list');
-            $.each(data, function(index, agent){
-                // Create HTML for each estate agent
-                var agentHTML = '<div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="' + (0.1 * index) + 's">';
-                agentHTML += '<div class="team-item rounded overflow-hidden">';
-                agentHTML += '<div class="position-relative">';
-                agentHTML += '<img class="img-fluid" src="img/agent.jpg" alt="' + agent.estateAgent.name + '" >';
-                agentHTML += '<div class="position-absolute start-50 top-100 translate-middle d-flex align-items-center">';
-                agentHTML += '</div>';
-                agentHTML += '</div>';
-                agentHTML += '<div class="text-center p-4 mt-3">';
-                agentHTML += '<h5 class="fw-bold mb-0">' + agent.estateAgent.name + ' ' + agent.estateAgent.surname + '</h5>';
-                agentHTML += '<small>' + agent.estateAgent.email + '</small>';
-                agentHTML += '</div>';
-                agentHTML += '</div>';
-                agentHTML += '</div>';
-
-                agentsList.append(agentHTML);
-            });
-        },
-        error: function(xhr, status, error){
-            console.error('Error fetching estate agents:', error);
-        }
-        });
-
-
-
+           
         
  });
 </script>
