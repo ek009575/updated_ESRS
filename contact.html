@@ -285,14 +285,14 @@
         });
     });
     $.ajax({
-        url: 'https://localhost:7070/GetAllEstates',
+        url: 'https://localhost:7070/Account/GetAllAgents',
         type: 'GET',
         dataType: 'json',
         success: function(agents) {
             const uniqueAgents = []; // list for holding unique estate agents.
 
             agents.forEach(agent => {
-                const isExist = uniqueAgents.find(uAgent => uAgent.estateAgent.email === agent.estateAgent.email);
+                const isExist = uniqueAgents.find(uAgent => uAgent.email === agent.email);
                 if (!isExist) {
                     uniqueAgents.push(agent); // if the agent has not been added to list, add the agent
                 }
@@ -300,10 +300,10 @@
 
             // Fill unique estate agents lists and fill the <select> item
             uniqueAgents.forEach(function(agent) {
-                console.log('Estate Agent Information:', agent.estateAgent.email);
+                console.log('Estate Agent Information:', agent.email);
                 $('#estateAgentSelect').append($('<option>', {
-                    value: agent.estateAgent.email,
-                    text: agent.estateAgent.name
+                    value: agent.email,
+                    text: agent.name
                 }));
             });
         },
