@@ -261,12 +261,12 @@
         // Use the selected email, if not selected use default email
         var selectedEmail = $('#estateAgentSelect').val() || defaultEmail;
         console.log('Selected Email:',selectedEmail);
-
+        var mailPriority = 0
 
         var mailData = {
             To: selectedEmail,
             Body: $('#name').val() + ' ' + $('#email').val() + ' ' + $('#message').val(),
-            Subject: $('#subject').val(),
+            Subject: $('#subject').val(),mailPriority
         };
         console.log("Mail data: ", mailData);
 
@@ -274,10 +274,11 @@
             url: 'https://localhost:7070/MailSender',
             type: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify(mailData),
+            data: mailData,
             success: function(response) {
                 // success response
                 console.log('Success: Email has been sent', response);
+                alert("Message is sent successfuly");
             },
             error: function(xhr, status, error) {
                 console.error('Error:', error);
